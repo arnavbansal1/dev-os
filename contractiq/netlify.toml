@@ -1,0 +1,31 @@
+# Netlify build configuration for ContractIQ (Next.js 14, App Router).
+#
+# The Next.js Runtime is required, not optional: this app is mostly dynamic
+# (API route handlers, middleware-based auth, per-request SSR). Without the
+# plugin Netlify publishes a static export and every /api/* route 404s.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[build.environment]
+  # Pin the major so a Netlify image default bump can't silently change runtime
+  # behaviour between deploys.
+  NODE_VERSION = "20"
+
+# Security headers are also set in next.config.mjs, which covers responses
+# served by the Next runtime. These repeat the framing/sniffing protections at
+# the CDN edge so they apply to static assets too.
+#
+# Content-Security-Policy is deliberately NOT duplicated here: it is built
+# per-environment in next.config.mjs (dev needs 'unsafe-eval'), and a static
+# copy would drift out of sync with it.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
