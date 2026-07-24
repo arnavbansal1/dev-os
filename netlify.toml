@@ -1,12 +1,22 @@
-# Netlify build configuration for ContractIQ (Next.js 14, App Router).
+# Netlify configuration for ContractIQ (Next.js 14, App Router).
 #
-# The Next.js Runtime is required, not optional: this app is mostly dynamic
-# (API route handlers, middleware-based auth, per-request SSR). Without the
-# plugin Netlify publishes a static export and every /api/* route 404s.
+# This file MUST live at the repository root. Netlify reads netlify.toml from
+# the root to discover `base`; a copy inside the app directory is never read on
+# a default-configured site, which is why the build looked for
+# /opt/build/repo/package.json and failed — there is no package.json at the root.
 [build]
+  # The Next.js app is not at the repo root. Netlify cd's here before doing
+  # anything, so this is what makes npm find contractiq/package.json.
+  base = "contractiq"
+
   command = "npm run build"
+
+  # Resolved relative to `base` -> contractiq/.next
   publish = ".next"
 
+# The Next.js Runtime is required, not optional: this app is mostly dynamic
+# (API route handlers, middleware-based auth, per-request SSR). Without the
+# plugin Netlify publishes a bare static export and every /api/* route 404s.
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
@@ -21,7 +31,7 @@
 #
 # Content-Security-Policy is deliberately NOT duplicated here: it is built
 # per-environment in next.config.mjs (dev needs 'unsafe-eval'), and a static
-# copy would drift out of sync with it.
+# copy would silently drift out of sync with it.
 [[headers]]
   for = "/*"
   [headers.values]
