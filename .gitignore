@@ -1,0 +1,38 @@
+# Repo-root ignores. Subprojects (e.g. contractiq/) keep their own .gitignore
+# for framework-specific paths; this file covers everything not under one.
+
+# ---- Secrets ----
+# .env*.local covers .env.local, .env.development.local, etc.
+.env
+.env.*
+.env*.local
+*.pem
+*.key
+
+# Templates are meant to be committed — re-include them after the rules above.
+!.env.example
+!.env*.example
+
+# ---- OS / editor cruft ----
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini
+
+# ---- Dependencies / build output ----
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# ---- Logs ----
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ---- TypeScript ----
+*.tsbuildinfo
